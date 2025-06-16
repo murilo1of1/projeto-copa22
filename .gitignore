@@ -1,0 +1,10 @@
+back/.env
+
+banco-copa-22.db
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+
+back/node_modules/
+front/node_modules/
