@@ -1,5 +1,13 @@
 const db = require('../config/database');
 
+const mapPlayer = (row) => {
+  if (!row) return null;
+  return {
+    name: row.Player,
+    ...row
+  };
+};
+
 const getTopScorer = async (req, res) => {
   try {
     db.get('SELECT * FROM player_stats ORDER BY Gls DESC LIMIT 1', [], (err, row) => {
@@ -10,7 +18,7 @@ const getTopScorer = async (req, res) => {
       if (!row) {
         return res.status(404).json({ message: 'Artilheiro não encontrado.' });
       }
-      res.json(row);
+      res.json(mapPlayer(row));
     });
   } catch (err) {
     console.error(err);
@@ -29,7 +37,7 @@ const getPlayerByName = async (req, res) => {
       if (!row) {
         return res.status(404).json({ message: 'Jogador não encontrado.' });
       }
-      res.json(row);
+      res.json(mapPlayer(row));
     });
   } catch (err) {
     console.error(err);
@@ -39,8 +47,8 @@ const getPlayerByName = async (req, res) => {
 
 const getPlayersByTeam = async (req, res) => {
   try {
-    const teamName = req.params.teamName.toUpperCase();
-    db.all('SELECT * FROM player_stats WHERE Team = ?', [teamName], (err, rows) => {
+    const teamName = req.params.teamName;
+    db.all('SELECT * FROM player_stats WHERE LOWER(Team) = LOWER(?)', [teamName], (err, rows) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ error: err.message });
@@ -48,7 +56,7 @@ const getPlayersByTeam = async (req, res) => {
       if (!rows || rows.length === 0) {
         return res.status(404).json({ message: 'Nenhum jogador encontrado para este time.' });
       }
-      res.json(rows);
+      res.json(rows.map(mapPlayer));
     });
   } catch (err) {
     console.error(err);
@@ -67,7 +75,22 @@ const getPlayersByClub = async (req, res) => {
       if (!rows || rows.length === 0) {
         return res.status(404).json({ message: 'Nenhum jogador encontrado para este clube.' });
       }
-      res.json(rows);
+      res.json(rows.map(mapPlayer));
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const getAllPlayers = async (req, res) => {
+  try {
+    db.all('SELECT * FROM player_stats', [], (err, rows) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(rows.map(mapPlayer));
     });
   } catch (err) {
     console.error(err);
@@ -79,5 +102,6 @@ module.exports = {
   getTopScorer,
   getPlayerByName,
   getPlayersByTeam,
-  getPlayersByClub
+  getPlayersByClub,
+  getAllPlayers
 };

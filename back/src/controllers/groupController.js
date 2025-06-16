@@ -1,5 +1,13 @@
 const db = require('../config/database');
 
+const mapGroup = (row) => {
+  if (!row) return null;
+  return {
+    name: row.group,
+    ...row
+  };
+};
+
 // Retorna todos os grupos e suas estatísticas
 const getAllGroups = async (req, res) => {
   try {
@@ -8,7 +16,7 @@ const getAllGroups = async (req, res) => {
         console.error(err);
         return res.status(500).json({ error: err.message });
       }
-      res.json(rows);
+      res.json(rows.map(mapGroup));
     });
   } catch (err) {
     console.error(err);
@@ -19,8 +27,8 @@ const getAllGroups = async (req, res) => {
 // Retorna as estatísticas de um grupo específico
 const getGroupByName = async (req, res) => {
   try {
-    const groupName = req.params.groupName.toUpperCase();
-    db.all('SELECT * FROM group_stats WHERE "group" = ?', [groupName], (err, rows) => {
+    const groupName = req.params.groupName;
+    db.all('SELECT * FROM group_stats WHERE LOWER("group") = LOWER(?)', [groupName], (err, rows) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ error: err.message });
@@ -28,7 +36,7 @@ const getGroupByName = async (req, res) => {
       if (!rows || rows.length === 0) {
         return res.status(404).json({ message: 'Grupo não encontrado.' });
       }
-      res.json(rows);
+      res.json(rows.map(mapGroup));
     });
   } catch (err) {
     console.error(err);

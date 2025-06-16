@@ -1,6 +1,8 @@
 back/.env
 
 banco-copa-22.db
+banco-copa-22.db-shm
+banco-copa-22.db-wal
 *.sqlite
 *.sqlite3
 *.db
