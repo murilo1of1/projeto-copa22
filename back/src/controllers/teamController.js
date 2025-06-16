@@ -1,5 +1,13 @@
 const db = require('../config/database');
 
+const mapTeam = (row) => {
+  if (!row) return null;
+  return {
+    name: row.team,
+    ...row
+  };
+};
+
 const getAllTeams = async (req, res) => {
   try {
     db.all('SELECT * FROM team_data', [], (err, rows) => {
@@ -7,7 +15,7 @@ const getAllTeams = async (req, res) => {
         console.error(err);
         return res.status(500).json({ error: err.message });
       }
-      res.json(rows);
+      res.json(rows.map(mapTeam));
     });
   } catch (err) {
     console.error(err);
@@ -17,8 +25,8 @@ const getAllTeams = async (req, res) => {
 
 const getTeamByName = async (req, res) => {
   try {
-    const teamName = req.params.teamName.toUpperCase();
-    db.get('SELECT * FROM team_data WHERE team = ?', [teamName], (err, row) => {
+    const teamName = req.params.teamName;
+    db.get('SELECT * FROM team_data WHERE LOWER(team) = LOWER(?)', [teamName], (err, row) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ error: err.message });
@@ -26,7 +34,7 @@ const getTeamByName = async (req, res) => {
       if (!row) {
         return res.status(404).json({ message: 'Time não encontrado.' });
       }
-      res.json(row);
+      res.json(mapTeam(row));
     });
   } catch (err) {
     console.error(err);
@@ -44,7 +52,7 @@ const getChampionTeam = async (req, res) => {
       if (!row) {
         return res.status(404).json({ message: 'Time campeão não encontrado.' });
       }
-      res.json(row);
+      res.json(mapTeam(row));
     });
   } catch (err) {
     console.error(err);
@@ -62,7 +70,7 @@ const getSecondPlaceTeam = async (req, res) => {
       if (!row) {
         return res.status(404).json({ message: 'Time segundo colocado não encontrado.' });
       }
-      res.json(row);
+      res.json(mapTeam(row));
     });
   } catch (err) {
     console.error(err);
@@ -80,7 +88,7 @@ const getThirdPlaceTeam = async (req, res) => {
       if (!row) {
         return res.status(404).json({ message: 'Time terceiro colocado não encontrado.' });
       }
-      res.json(row);
+      res.json(mapTeam(row));
     });
   } catch (err) {
     console.error(err);
@@ -95,7 +103,7 @@ const getTeamsWithMostGoals = async (req, res) => {
         console.error(err);
         return res.status(500).json({ error: err.message });
       }
-      res.json(rows);
+      res.json(rows.map(mapTeam));
     });
   } catch (err) {
     console.error(err);
@@ -110,7 +118,7 @@ const getTeamsWithMostFoulsSuffered = async (req, res) => {
         console.error(err);
         return res.status(500).json({ error: err.message });
       }
-      res.json(rows);
+      res.json(rows.map(mapTeam));
     });
   } catch (err) {
     console.error(err);
