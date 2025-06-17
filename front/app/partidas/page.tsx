@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, MapPin } from "lucide-react"
-import { useMatches, useMatchesByGroup, useGroups } from "@/hooks/use-api"
+import { useMatches, useMatchesByGroup, useGroups, useTeams } from "@/hooks/use-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { ErrorMessage } from "@/components/error-message"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -32,6 +32,7 @@ export default function PartidasPage() {
   const { data: allMatches, loading: allLoading, error: allError } = useMatches()
   const { data: groupMatches, loading: groupLoading, error: groupError } = useMatchesByGroup(selectedGroup)
   const { data: groups } = useGroups()
+  const { data: teams } = useTeams();
 
   const groupAndStageOptions = [
     { value: "all", label: "Todas as partidas" },
@@ -59,11 +60,19 @@ export default function PartidasPage() {
   const loading = selectedGroup === "all" ? allLoading : groupLoading
   const error = selectedGroup === "all" ? allError : groupError
 
+  // Cria um mapa para lookup rápido dos pênaltis por nome do time
+  const pensMap = teams?.reduce((acc, t) => {
+    acc[(t.name || t.team || t.nome || "").toLowerCase()] = t.pens_made;
+    return acc;
+  }, {} as Record<string, number>);
+
   const matchesParsed = matches?.map(match => {
     const parsed = parseScore(match.score);
     return {
       ...match,
       ...parsed,
+      team_1_penalties: pensMap?.[(match.team_1 || match.homeTeam || "").toLowerCase()],
+      team_2_penalties: pensMap?.[(match.team_2 || match.awayTeam || "").toLowerCase()],
     };
   });
 
@@ -120,9 +129,9 @@ export default function PartidasPage() {
                         {match.team_2 || match.awayTeam || "Time B"}
                       </span>
                     </div>
-                    {(match.team_1_penalties !== undefined && match.team_2_penalties !== undefined) && (
+                    {(match.team_1 && match.team_2 && pensMap) && (
                       <div className="mt-1 text-xs text-amber-300 font-semibold text-center">
-                        ({match.team_1_penalties}) <span className="mx-1">x</span> ({match.team_2_penalties})
+                        ({pensMap[(match.team_1 || match.homeTeam || "").toLowerCase()]}) <span className="mx-1">x</span> ({pensMap[(match.team_2 || match.awayTeam || "").toLowerCase()]})
                       </div>
                     )}
                   </div>
@@ -130,19 +139,19 @@ export default function PartidasPage() {
                     {match.date && (
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4" />
-                        <span>{match.date}</span>
+                        <span className="text-white">{match.date}</span>
                       </div>
                     )}
                     {match.hour && (
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4" />
-                        <span>{match.hour}</span>
+                        <span className="text-white">{match.hour}</span>
                       </div>
                     )}
                     {match.venue && (
                       <div className="flex items-center space-x-2">
                         <MapPin className="h-4 w-4" />
-                        <span>{match.venue}</span>
+                        <span className="text-white">{match.venue}</span>
                       </div>
                     )}
                   </div>

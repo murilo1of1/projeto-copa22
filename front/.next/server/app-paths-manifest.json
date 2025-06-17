@@ -1,7 +1,0 @@
-{
-  "/times/[teamName]/page": "app/times/[teamName]/page.js",
-  "/jogadores/page": "app/jogadores/page.js",
-  "/grupos/page": "app/grupos/page.js",
-  "/page": "app/page.js",
-  "/partidas/page": "app/partidas/page.js"
-}

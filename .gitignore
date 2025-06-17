@@ -10,3 +10,4 @@ banco-copa-22.db-wal
 
 back/node_modules/
 front/node_modules/
+front/.next/
