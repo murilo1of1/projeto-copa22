@@ -8,6 +8,13 @@ const mapTeam = (row) => {
   };
 };
 
+const removeDiacritics = (str) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+
+function normalizeTeamName(teamName) {
+  if (!teamName) return teamName;
+  return removeDiacritics(teamName.trim().replace(/\s+/g, ' '));
+}
+
 const getAllTeams = async (req, res) => {
   try {
     db.all('SELECT * FROM team_data', [], (err, rows) => {
@@ -25,7 +32,7 @@ const getAllTeams = async (req, res) => {
 
 const getTeamByName = async (req, res) => {
   try {
-    const teamName = req.params.teamName;
+    let teamName = normalizeTeamName(req.params.teamName);
     db.get('SELECT * FROM team_data WHERE LOWER(team) = LOWER(?)', [teamName], (err, row) => {
       if (err) {
         console.error(err);
@@ -133,5 +140,6 @@ module.exports = {
   getSecondPlaceTeam,
   getThirdPlaceTeam,
   getTeamsWithMostGoals,
-  getTeamsWithMostFoulsSuffered
+  getTeamsWithMostFoulsSuffered,
+  normalizeTeamName 
 };

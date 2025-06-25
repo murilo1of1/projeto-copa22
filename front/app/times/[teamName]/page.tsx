@@ -132,9 +132,9 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
                   <p className="text-sm text-gray-400">Gols</p>
                 </div>
               )}
-              {team.goals_pens !== undefined && (
+              {team.pens_made !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.goals_pens}</p>
+                  <p className="text-2xl font-bold text-white">{team.pens_made}</p>
                   <p className="text-sm text-gray-400">Gols de Pênalti</p>
                 </div>
               )}

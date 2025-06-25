@@ -1,5 +1,7 @@
+back/node_modules/
+front/node_modules/
 back/.env
-
+front/.env
 banco-copa-22.db
 banco-copa-22.db-shm
 banco-copa-22.db-wal
@@ -7,6 +9,6 @@ banco-copa-22.db-wal
 *.sqlite3
 *.db
 *.db3
-
-back/node_modules/
-front/node_modules/
+front/.next/
+front/out/
+*.log

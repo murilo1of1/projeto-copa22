@@ -1,4 +1,6 @@
 const db = require('../config/database');
+// Importa a função de normalização do teamController
+const { normalizeTeamName } = require('./teamController');
 
 const mapGroup = (row) => {
   if (!row) return null;
@@ -24,7 +26,6 @@ const getAllGroups = async (req, res) => {
   }
 };
 
-// Retorna as estatísticas de um grupo específico
 const getGroupByName = async (req, res) => {
   try {
     const groupName = req.params.groupName;

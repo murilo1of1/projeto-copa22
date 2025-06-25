@@ -1,4 +1,6 @@
 const db = require('../config/database');
+// Importa a função de normalização do teamController
+const { normalizeTeamName } = require('./teamController');
 
 const mapMatch = (row) => {
   if (!row) return null;

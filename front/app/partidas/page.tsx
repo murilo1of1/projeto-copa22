@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, MapPin } from "lucide-react"
-import { useMatches, useMatchesByGroup, useGroups } from "@/hooks/use-api"
+import { useMatches, useMatchesByGroup, useGroups, useTeams } from "@/hooks/use-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { ErrorMessage } from "@/components/error-message"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -32,6 +32,7 @@ export default function PartidasPage() {
   const { data: allMatches, loading: allLoading, error: allError } = useMatches()
   const { data: groupMatches, loading: groupLoading, error: groupError } = useMatchesByGroup(selectedGroup)
   const { data: groups } = useGroups()
+  const { data: teams } = useTeams();
 
   const groupAndStageOptions = [
     { value: "all", label: "Todas as partidas" },
@@ -59,11 +60,28 @@ export default function PartidasPage() {
   const loading = selectedGroup === "all" ? allLoading : groupLoading
   const error = selectedGroup === "all" ? allError : groupError
 
+  // Função para extrair os pênaltis do score da partida
+  function extractPenalties(score: string) {
+    // Exemplo de score: (4) 0,0 (2)
+    const regex = /\((\d+)\)[^\d]+[\d,]+[^\d]+\((\d+)\)/;
+    const match = score ? score.match(regex) : null;
+    if (match) {
+      return {
+        team_1_penalties: Number(match[1]),
+        team_2_penalties: Number(match[2])
+      };
+    }
+    return null;
+  }
+
   const matchesParsed = matches?.map(match => {
     const parsed = parseScore(match.score);
+    const penalties = extractPenalties(match.score);
     return {
       ...match,
       ...parsed,
+      team_1_penalties: penalties?.team_1_penalties,
+      team_2_penalties: penalties?.team_2_penalties,
     };
   });
 
@@ -120,7 +138,8 @@ export default function PartidasPage() {
                         {match.team_2 || match.awayTeam || "Time B"}
                       </span>
                     </div>
-                    {(match.team_1_penalties !== undefined && match.team_2_penalties !== undefined) && (
+                    {/* Exibe pênaltis só se o score tiver parênteses e penalties extraídos */}
+                    {match.team_1_penalties !== undefined && match.team_2_penalties !== undefined && (
                       <div className="mt-1 text-xs text-amber-300 font-semibold text-center">
                         ({match.team_1_penalties}) <span className="mx-1">x</span> ({match.team_2_penalties})
                       </div>
@@ -130,19 +149,19 @@ export default function PartidasPage() {
                     {match.date && (
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4" />
-                        <span>{match.date}</span>
+                        <span className="text-white">{match.date}</span>
                       </div>
                     )}
                     {match.hour && (
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4" />
-                        <span>{match.hour}</span>
+                        <span className="text-white">{match.hour}</span>
                       </div>
                     )}
                     {match.venue && (
                       <div className="flex items-center space-x-2">
                         <MapPin className="h-4 w-4" />
-                        <span>{match.venue}</span>
+                        <span className="text-white">{match.venue}</span>
                       </div>
                     )}
                   </div>
@@ -196,7 +215,9 @@ export default function PartidasPage() {
       {matches?.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500">
-            {selectedGroup ? `Nenhuma partida encontrada para o Grupo ${selectedGroup}` : "Nenhuma partida encontrada"}
+            {selectedGroup !== "all"
+              ? `Nenhuma partida encontrada para o Grupo ${selectedGroup}`
+              : "Nenhuma partida encontrada"}
           </p>
         </div>
       )}

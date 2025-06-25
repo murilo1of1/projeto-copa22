@@ -1,4 +1,6 @@
 const db = require('../config/database');
+// Importa a função de normalização do teamController
+const { normalizeTeamName } = require('./teamController');
 
 const mapPlayer = (row) => {
   if (!row) return null;
@@ -47,8 +49,9 @@ const getPlayerByName = async (req, res) => {
 
 const getPlayersByTeam = async (req, res) => {
   try {
-    const teamName = req.params.teamName;
-    db.all('SELECT * FROM player_stats WHERE LOWER(Team) = LOWER(?)', [teamName], (err, rows) => {
+    const teamName = req.params.teamName.trim();
+    console.log('teamName recebido:', teamName); // LOG para debug
+    db.all('SELECT * FROM player_stats WHERE LOWER(TRIM(Team)) = LOWER(TRIM(?))', [teamName], (err, rows) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ error: err.message });
