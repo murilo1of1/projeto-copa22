@@ -6,6 +6,7 @@ import { Target, Trophy, Users, TrendingUp } from "lucide-react"
 import { useGroups } from "@/hooks/use-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { ErrorMessage } from "@/components/error-message"
+import { FlagIcon } from "@/components/flag-icon"
 import Link from "next/link"
 
 export default function GruposPage() {
@@ -66,7 +67,16 @@ export default function GruposPage() {
                     {standings.map((team: any, idx: number) => (
                       <tr key={team.team} className="hover:bg-amber-400/10 transition-colors">
                         <td className="pl-8 pr-3 py-2 text-amber-400 font-bold text-center">{idx + 1}</td>
-                        <td className="px-3 py-2 text-white font-semibold">{team.team}</td>
+                        <td className="px-3 py-2 text-white font-semibold">
+                          <div className="flex items-center space-x-2">
+                            <FlagIcon 
+                              countryCode={team.team || ''} 
+                              className="w-5 h-3 flex-shrink-0" 
+                              alt={`Bandeira ${team.team}`} 
+                            />
+                            <span>{team.team}</span>
+                          </div>
+                        </td>
                         <td className="px-2 py-2 text-center text-slate-200">{team.points}</td>
                         <td className="px-2 py-2 text-center text-slate-200">{team.matches_played}</td>
                         <td className="px-2 py-2 text-center text-slate-200">{team.wins}</td>

@@ -8,6 +8,7 @@ import { Calendar, Clock, MapPin } from "lucide-react"
 import { useMatches, useMatchesByGroup, useGroups, useTeams } from "@/hooks/use-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { ErrorMessage } from "@/components/error-message"
+import { FlagIcon } from "@/components/flag-icon"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 function parseScore(score: string) {
@@ -60,9 +61,7 @@ export default function PartidasPage() {
   const loading = selectedGroup === "all" ? allLoading : groupLoading
   const error = selectedGroup === "all" ? allError : groupError
 
-  // Função para extrair os pênaltis do score da partida
   function extractPenalties(score: string) {
-    // Exemplo de score: (4) 0,0 (2)
     const regex = /\((\d+)\)[^\d]+[\d,]+[^\d]+\((\d+)\)/;
     const match = score ? score.match(regex) : null;
     if (match) {
@@ -123,20 +122,34 @@ export default function PartidasPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex flex-col items-center justify-center space-y-2">
-                    <div className="relative w-full flex items-center justify-center" style={{ minHeight: 40 }}>
-                      <span className="absolute left-0 font-semibold text-white w-1/3 text-left truncate">
-                        {match.team_1 || match.homeTeam || "Time A"}
-                      </span>
-                      <span className="mx-auto text-2xl font-bold text-amber-400 w-1/3 text-center">
+                    <div className="relative w-full flex items-center justify-between" style={{ minHeight: 40 }}>
+                      <div className="flex items-center space-x-2 w-2/5">
+                        <FlagIcon 
+                          countryCode={match.team_1 || match.homeTeam || ''} 
+                          className="w-5 h-3 flex-shrink-0" 
+                          alt={`Bandeira ${match.team_1 || match.homeTeam}`} 
+                        />
+                        <span className="font-semibold text-white text-sm truncate">
+                          {match.team_1 || match.homeTeam || "Time A"}
+                        </span>
+                      </div>
+                      <span className="text-2xl font-bold text-amber-400 text-center w-1/5">
                         {match.team_1_goals !== undefined && match.team_2_goals !== undefined ? (
-                          <>{match.team_1_goals} <span className="mx-1">-</span> {match.team_2_goals}</>
+                          <>{match.team_1_goals} - {match.team_2_goals}</>
                         ) : (
                           <span className="text-slate-500">vs</span>
                         )}
                       </span>
-                      <span className="absolute right-0 font-semibold text-white w-1/3 text-right truncate">
-                        {match.team_2 || match.awayTeam || "Time B"}
-                      </span>
+                      <div className="flex items-center space-x-2 w-2/5 justify-end">
+                        <span className="font-semibold text-white text-sm truncate">
+                          {match.team_2 || match.awayTeam || "Time B"}
+                        </span>
+                        <FlagIcon 
+                          countryCode={match.team_2 || match.awayTeam || ''} 
+                          className="w-5 h-3 flex-shrink-0" 
+                          alt={`Bandeira ${match.team_2 || match.awayTeam}`} 
+                        />
+                      </div>
                     </div>
                     {/* Exibe pênaltis só se o score tiver parênteses e penalties extraídos */}
                     {match.team_1_penalties !== undefined && match.team_2_penalties !== undefined && (

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Trophy, Users, Calendar, User, Target } from "lucide-react"
+import { Trophy, Users, Calendar, User, Target, Gamepad2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/partidas", label: "Partidas", icon: Calendar },
   { href: "/jogadores", label: "Jogadores", icon: User },
   { href: "/grupos", label: "Grupos", icon: Target },
+  { href: "/bingo", label: "Bingo", icon: Gamepad2 },
 ]
 
 export function Navigation() {

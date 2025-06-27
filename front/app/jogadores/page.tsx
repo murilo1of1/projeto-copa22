@@ -11,6 +11,7 @@ import { Search, User, Trophy, Users, Building } from "lucide-react"
 import { usePlayer, usePlayersByTeam, usePlayersByClub, useTopScorer, useAllPlayers } from "@/hooks/use-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { ErrorMessage } from "@/components/error-message"
+import { FlagIcon } from "@/components/flag-icon"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
@@ -119,7 +120,16 @@ export default function JogadoresPage() {
                 onClick={() => setSelectedPlayer(player)}
               >
                 <td className="px-6 py-3 text-slate-100 font-semibold whitespace-nowrap">{player.name}</td>
-                <td className="px-6 py-3 text-slate-200 whitespace-nowrap">{player.Team}</td>
+                <td className="px-6 py-3 text-slate-200 whitespace-nowrap">
+                  <div className="flex items-center space-x-2">
+                    <FlagIcon 
+                      countryCode={player.Team || ''} 
+                      className="w-5 h-3 flex-shrink-0" 
+                      alt={`Bandeira ${player.Team}`} 
+                    />
+                    <span>{player.Team}</span>
+                  </div>
+                </td>
                 <td className="px-6 py-3 text-slate-200 whitespace-nowrap">{player.Club}</td>
                 <td className="px-6 py-3 text-slate-200 whitespace-nowrap">{player.Pos}</td>
                 <td className="px-6 py-3 text-slate-200 whitespace-nowrap">{player.Gls}</td>
@@ -140,7 +150,17 @@ export default function JogadoresPage() {
               Detalhes completos do jogador
             </DialogDescription>
             <div className="grid grid-cols-2 gap-3 mt-2">
-              <div className="bg-slate-900 rounded-lg p-2"><strong className="text-amber-300">Time:</strong> <span className="text-white">{selectedPlayer?.Team}</span></div>
+              <div className="bg-slate-900 rounded-lg p-2">
+                <strong className="text-amber-300">Time:</strong> 
+                <div className="flex items-center space-x-2 mt-1">
+                  <FlagIcon 
+                    countryCode={selectedPlayer?.Team || ''} 
+                    className="w-5 h-3 flex-shrink-0" 
+                    alt={`Bandeira ${selectedPlayer?.Team}`} 
+                  />
+                  <span className="text-white">{selectedPlayer?.Team}</span>
+                </div>
+              </div>
               <div className="bg-slate-900 rounded-lg p-2"><strong className="text-amber-300">Clube:</strong> <span className="text-white">{selectedPlayer?.Club}</span></div>
               <div className="bg-slate-900 rounded-lg p-2"><strong className="text-amber-300">Posição:</strong> <span className="text-white">{selectedPlayer?.Pos}</span></div>
               <div className="bg-slate-900 rounded-lg p-2"><strong className="text-amber-300">Idade:</strong> <span className="text-white">{selectedPlayer?.Age}</span></div>

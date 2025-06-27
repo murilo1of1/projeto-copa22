@@ -8,6 +8,7 @@ import { Search, Trophy, Target, Users, Medal } from "lucide-react"
 import { useTeams } from "@/hooks/use-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { ErrorMessage } from "@/components/error-message"
+import { FlagIcon } from "@/components/flag-icon"
 import Link from "next/link"
 
 export default function TimesPage() {
@@ -54,7 +55,11 @@ export default function TimesPage() {
             <Card className="h-full hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer bg-slate-800 border-slate-700 hover:border-amber-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2 text-white">
-                  <Users className="h-4 w-4 text-amber-400" />
+                  <FlagIcon 
+                    countryCode={team.name || ''} 
+                    className="w-6 h-4 flex-shrink-0" 
+                    alt={`Bandeira ${team.name}`} 
+                  />
                   <span>{String(team.name).replace(/0+$/g, "").replace(/\s+$/, "")}</span>
                   {Number(team.champion) === 1 && (
                     <span className="ml-1" aria-label="Campeão" title="Campeão">

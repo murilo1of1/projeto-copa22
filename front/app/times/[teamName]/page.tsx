@@ -6,6 +6,7 @@ import { ArrowLeft, Trophy, Target, Users, Calendar, Medal } from "lucide-react"
 import { useTeam, usePlayersByTeam } from "@/hooks/use-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { ErrorMessage } from "@/components/error-message"
+import { FlagIcon } from "@/components/flag-icon"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { use } from "react";
@@ -37,6 +38,11 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
         </Link>
       </div>
       <h1 className="text-3xl font-bold text-white flex items-center mb-1">
+        <FlagIcon 
+          countryCode={team?.name || ''} 
+          className="w-8 h-5 mr-3" 
+          alt={`Bandeira ${team?.name}`} 
+        />
         {team?.name}
         {team?.champion ? (
           <span className="ml-2" aria-label="Campeão" title="Campeão">
