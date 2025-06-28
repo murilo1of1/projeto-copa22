@@ -1,31 +1,45 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Trophy, Target, Users, Calendar, Medal } from "lucide-react"
-import { useTeam, usePlayersByTeam } from "@/hooks/use-api"
-import { LoadingSpinner } from "@/components/loading-spinner"
-import { ErrorMessage } from "@/components/error-message"
-import { FlagIcon } from "@/components/flag-icon"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { use } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  Trophy,
+  Target,
+  Users,
+  Calendar,
+  Medal,
+} from "lucide-react";
+import { useTeam, usePlayersByTeam } from "@/hooks/use-api";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { ErrorMessage } from "@/components/error-message";
+import { FlagIcon } from "@/components/flag-icon";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface TeamDetailPageProps {
   params: {
-    teamName: string
-  }
+    teamName: string;
+  };
 }
 
 export default function TeamDetailPage({ params }: TeamDetailPageProps) {
-  const { teamName } = use(params as unknown as Promise<{ teamName: string }>);
-  const teamNameDecoded = decodeURIComponent(teamName);
+  const teamNameDecoded = decodeURIComponent(params.teamName);
 
-  const { data: team, loading: teamLoading, error: teamError } = useTeam(teamNameDecoded);
-  const { data: players, loading: playersLoading, error: playersError } = usePlayersByTeam(teamNameDecoded);
+  const {
+    data: team,
+    loading: teamLoading,
+    error: teamError,
+  } = useTeam(teamNameDecoded);
+  const {
+    data: players,
+    loading: playersLoading,
+    error: playersError,
+  } = usePlayersByTeam(teamNameDecoded);
 
-  if (teamLoading) return <LoadingSpinner message="Carregando detalhes do time..." />
-  if (teamError) return <ErrorMessage message={teamError} />
+  if (teamLoading)
+    return <LoadingSpinner message="Carregando detalhes do time..." />;
+  if (teamError) return <ErrorMessage message={teamError} />;
 
   return (
     <div className="space-y-6">
@@ -38,10 +52,10 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
         </Link>
       </div>
       <h1 className="text-3xl font-bold text-white flex items-center mb-1">
-        <FlagIcon 
-          countryCode={team?.name || ''} 
-          className="w-8 h-5 mr-3" 
-          alt={`Bandeira ${team?.name}`} 
+        <FlagIcon
+          countryCode={team?.name || ""}
+          className="w-8 h-5 mr-3"
+          alt={`Bandeira ${team?.name}`}
         />
         {team?.name}
         {team?.champion ? (
@@ -67,7 +81,9 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
         {team?.country && (
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">País</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">
+                País
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{team.country}</p>
@@ -104,7 +120,10 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
       </div>
 
       {/* Desempenho e Gols */}
-      {(team?.wins !== undefined || team?.ties !== undefined || team?.losses !== undefined || team?.goals !== undefined) && (
+      {(team?.wins !== undefined ||
+        team?.ties !== undefined ||
+        team?.losses !== undefined ||
+        team?.goals !== undefined) && (
         <Card className="mb-8 bg-[#020818] border-slate-700">
           <CardHeader>
             <CardTitle className="flex items-center text-white text-2xl">
@@ -140,37 +159,49 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
               )}
               {team.pens_made !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.pens_made}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.pens_made}
+                  </p>
                   <p className="text-sm text-gray-400">Gols de Pênalti</p>
                 </div>
               )}
               {team.possession !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.possession}%</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.possession}%
+                  </p>
                   <p className="text-sm text-gray-400">Posse</p>
                 </div>
               )}
               {team.xg !== undefined && team.games > 0 && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{(team.xg / team.games).toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {(team.xg / team.games).toFixed(2)}
+                  </p>
                   <p className="text-sm text-gray-400">xG/jogo</p>
                 </div>
               )}
               {team.assists !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.assists}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.assists}
+                  </p>
                   <p className="text-sm text-gray-400">Assistências</p>
                 </div>
               )}
               {team.cards_yellow !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.cards_yellow}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.cards_yellow}
+                  </p>
                   <p className="text-sm text-gray-400">Cartões Amarelos</p>
                 </div>
               )}
               {team.cards_red !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.cards_red}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.cards_red}
+                  </p>
                   <p className="text-sm text-gray-400">Cartões Vermelhos</p>
                 </div>
               )}
@@ -182,25 +213,33 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
               )}
               {team.shots_on_target !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.shots_on_target}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.shots_on_target}
+                  </p>
                   <p className="text-sm text-gray-400">Chutes no Alvo</p>
                 </div>
               )}
               {team.tackles !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.tackles}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.tackles}
+                  </p>
                   <p className="text-sm text-gray-400">Desarmes</p>
                 </div>
               )}
               {team.interceptions !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.interceptions}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.interceptions}
+                  </p>
                   <p className="text-sm text-gray-400">Interceptações</p>
                 </div>
               )}
               {team.clearances !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.clearances}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.clearances}
+                  </p>
                   <p className="text-sm text-gray-400">Rebatidas</p>
                 </div>
               )}
@@ -218,7 +257,9 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
               )}
               {team.gk_clean_sheets !== undefined && (
                 <div>
-                  <p className="text-2xl font-bold text-white">{team.gk_clean_sheets}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {team.gk_clean_sheets}
+                  </p>
                   <p className="text-sm text-gray-400">Clean Sheets</p>
                 </div>
               )}
@@ -243,15 +284,26 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
           ) : players && players.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {players.map((player, index) => (
-                <div key={player.name || index} className="p-4 border rounded-lg">
+                <div
+                  key={player.name || index}
+                  className="p-4 border rounded-lg"
+                >
                   <h3 className="font-semibold">{player.name}</h3>
                   {player.position && (
                     <Badge variant="outline" className="mt-1">
                       {player.position}
                     </Badge>
                   )}
-                  {player.club && <p className="text-sm text-gray-600 mt-1">Clube: {player.club}</p>}
-                  {player.goals !== undefined && <p className="text-sm text-gray-600">Gols: {player.goals}</p>}
+                  {player.club && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Clube: {player.club}
+                    </p>
+                  )}
+                  {player.goals !== undefined && (
+                    <p className="text-sm text-gray-600">
+                      Gols: {player.goals}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -261,5 +313,5 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
