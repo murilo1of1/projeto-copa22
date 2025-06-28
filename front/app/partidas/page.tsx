@@ -60,19 +60,28 @@ export default function PartidasPage() {
   const loading = selectedGroup === "all" ? allLoading : groupLoading
   const error = selectedGroup === "all" ? allError : groupError
 
-  // Cria um mapa para lookup rápido dos pênaltis por nome do time
-  const pensMap = teams?.reduce((acc, t) => {
-    acc[(t.name || t.team || t.nome || "").toLowerCase()] = t.pens_made;
-    return acc;
-  }, {} as Record<string, number>);
+  // Função para extrair os pênaltis do score da partida
+  function extractPenalties(score: string) {
+    // Exemplo de score: (4) 0,0 (2)
+    const regex = /\((\d+)\)[^\d]+[\d,]+[^\d]+\((\d+)\)/;
+    const match = score ? score.match(regex) : null;
+    if (match) {
+      return {
+        team_1_penalties: Number(match[1]),
+        team_2_penalties: Number(match[2])
+      };
+    }
+    return null;
+  }
 
   const matchesParsed = matches?.map(match => {
     const parsed = parseScore(match.score);
+    const penalties = extractPenalties(match.score);
     return {
       ...match,
       ...parsed,
-      team_1_penalties: pensMap?.[(match.team_1 || match.homeTeam || "").toLowerCase()],
-      team_2_penalties: pensMap?.[(match.team_2 || match.awayTeam || "").toLowerCase()],
+      team_1_penalties: penalties?.team_1_penalties,
+      team_2_penalties: penalties?.team_2_penalties,
     };
   });
 
@@ -129,9 +138,10 @@ export default function PartidasPage() {
                         {match.team_2 || match.awayTeam || "Time B"}
                       </span>
                     </div>
-                    {(match.team_1 && match.team_2 && pensMap) && (
+                    {/* Exibe pênaltis só se o score tiver parênteses e penalties extraídos */}
+                    {match.team_1_penalties !== undefined && match.team_2_penalties !== undefined && (
                       <div className="mt-1 text-xs text-amber-300 font-semibold text-center">
-                        ({pensMap[(match.team_1 || match.homeTeam || "").toLowerCase()]}) <span className="mx-1">x</span> ({pensMap[(match.team_2 || match.awayTeam || "").toLowerCase()]})
+                        ({match.team_1_penalties}) <span className="mx-1">x</span> ({match.team_2_penalties})
                       </div>
                     )}
                   </div>
